@@ -5,12 +5,12 @@ export default function Browse() {
     <div id="browse" className="col">
       <p>Or browse our categories</p>
       <ul id="categories" className="list-group list-group-horizontal flex-wrap">
-        <li className="list-group-item">Health</li>
-        <li className="list-group-item">Productivity</li>
-        <li className="list-group-item">Relationships</li>
-        <li className="list-group-item">Finance</li>
-        <li className="list-group-item">Self-care</li>
-        <li className="list-group-item">Personal</li>
+        <li className="list-group-item col-4 col-md-2">Health</li>
+        <li className="list-group-item col-4 col-md-2">Productivity</li>
+        <li className="list-group-item col-4 col-md-2">Relationships</li>
+        <li className="list-group-item col-4 col-md-2">Finance</li>
+        <li className="list-group-item col-4 col-md-2">Self-care</li>
+        <li className="list-group-item col-4 col-md-2">Personal</li>
       </ul>
     </div>
   );

@@ -12,8 +12,8 @@ const Navbar = () => {
                     </div>
                     <div className="col justify-content-end">
                         <ul id="nav-links" className="list-group list-group-horizontal">
-                            <li className="list-group-item"><Link to="/explore">Habits</Link></li>
-                            <li className="list-group-item"><Link to="/feed">Explore</Link></li>
+                             <li className="list-group-item"><Link to="/feed">Feed</Link></li>
+                             <li className="list-group-item"><Link to="/explore">Explore</Link></li>
                             <li className="list-group-item"><Link to="/">Create new habit</Link></li>
                             <li className="list-group-item"><Link to="/profile">Profile</Link></li>
                         </ul>
