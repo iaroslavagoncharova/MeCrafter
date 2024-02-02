@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 export default function UserInfo() {
   const [isEditing, setIsEditing] = useState(false);
@@ -11,10 +11,9 @@ export default function UserInfo() {
   };
 
   const handleSaveProfile = () => {
-    // Add logic to save the modified profile data
-    // You can send a request to your server or update local state
     setIsEditing(false);
   };
+  
   return (
     <div className="col-md-6 content-left">
       <div className="card">

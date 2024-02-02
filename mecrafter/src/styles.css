@@ -143,7 +143,12 @@ main {
 }
 
 #submit-button {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+}
+
+#habit-form input {
+    margin: 0.5rem 0;
 }
 
 .col {
@@ -172,3 +177,48 @@ main {
 .row {
     margin: 0;
 }
+
+#explore-content {
+    justify-content: space-evenly;
+}
+
+#explore-content .content-left, #explore-content .content-right {
+    margin: 0;
+    margin-top: 1.5rem;
+}
+
+#habit-cards-div {
+    background: none;
+    border: none;
+}
+
+#habit-card {
+    border: 2px solid var(--dark-green);
+}
+
+.form-select option:checked {
+    background-color: var(--sand);
+}
+
+.form-select:focus {
+    outline: none;
+    box-shadow: none;
+  }
+  .form-select:focus-visible, .form-control:focus-visible {
+    outline: rgba(115, 144, 114, 0.9) 1px 5px;
+    box-shadow: rgba(115, 144, 114, 0.6) 0px 0px 0px 0.25rem;
+  }
+
+  #search-input input {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  #reset-btn {
+    margin-top: 1rem;
+  }
+
+  .content-left .card {
+    margin: 1rem;
+    border: 2px solid var(--dark-green);
+  }
