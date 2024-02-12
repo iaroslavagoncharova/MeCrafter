@@ -9,10 +9,12 @@ export default function HabitInfo({ userHabits }: { userHabits: UserHabits | nul
 
   const handleEditClick = () => {
     setEditHabit(true);
+    localStorage.setItem("habit", JSON.stringify(userHabits));
   };
 
   const handleFrequencyEdit = () => {
     setEditFrequency(true);
+    localStorage.setItem("frequency", JSON.stringify(userHabits));
   };
 
   return (

@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
 
-
 const Navbar = () => {
+    const token = localStorage.getItem('token');
     return (
-        <nav id="nav">
             <div className="container">
                 <div className="row">
                     <div className="col">
@@ -14,12 +13,12 @@ const Navbar = () => {
                              <li className="list-group-item"><Link to="/feed">Feed</Link></li>
                              <li className="list-group-item"><Link to="/explore">Explore</Link></li>
                             <li className="list-group-item"><Link to="/">Create new habit</Link></li>
-                            <li className="list-group-item"><Link to="/profile">Profile</Link></li>
+                            { token ? <li className="list-group-item"><Link to="/profile">Profile</Link></li> : null }
+                            { !token ? <li className="list-group-item"><Link to="/signup">Sign up</Link></li> : null }
                         </ul>
                     </div>
                 </div>
             </div>
-        </nav>
     )
 }
 

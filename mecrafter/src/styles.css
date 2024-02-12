@@ -222,3 +222,71 @@ main {
     margin: 1rem;
     border: 2px solid var(--dark-green);
   }
+
+  .btn:disabled {
+    background-color: var(--medium-green);
+    cursor: not-allowed;
+    color: var(--sand);
+    text-decoration: line-through;
+  }
+
+  #post-form, #post-form-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+  }
+
+  #post-form-group textarea {
+    margin: 1rem auto;
+  }
+
+  #postImage {
+    border: 2px solid var(--dark-green);
+    margin: 1rem 0;
+  }
+
+  #post-btn {
+    margin: 1rem 0;
+  }
+
+  #signup-form, #login-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: end;
+    justify-items: center;
+    border: 2px solid var(--dark-green);
+  }
+
+    #signup-form input, #signup-form label, #login-form input, #login-form label
+    {
+        margin: 0.5rem;
+    }
+#login-form {
+    align-items: center;
+}
+#auth-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+#signup-form form, #login-form form {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-items: center;
+}
+
+.btn.active {
+    border: 2px solid var(--light-green);
+}
+
+.btn.active:hover {
+    background-color: var(--dark-green);
+}

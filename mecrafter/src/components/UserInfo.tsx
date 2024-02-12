@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { User } from "../types/DBTypes";
 
-export default function UserInfo() {
+export default function UserInfo({ user }: { user: User }) {
   const [isEditing, setIsEditing] = useState(false);
   const handleEditClick = () => {
     setIsEditing(true);
@@ -74,13 +75,13 @@ export default function UserInfo() {
                 </div>
                 <div className="col-6 userinfo">
                   <p className="mb-0">
-                    <span>Happy User</span>
+                    <span>{user.username}</span>
                   </p>
                   <p className="mb-0">
-                    <span>Joined on 26.01.2024</span>
+                    <span>Joined on {new Date(user.created_at).toLocaleDateString('fi-FI')}</span>
                   </p>
                   <p className="mb-0">
-                    <span>happyuser@example.com</span>
+                    <span>{user.email}</span>
                   </p>
                 </div>
               </div>
