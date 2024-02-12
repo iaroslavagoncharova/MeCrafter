@@ -1,1 +1,1 @@
-Open [MeCrafter](https://users.metropolia.fi/~iaroslag/MeCrafter/) to view it in the browser.
+Open [MeCrafter](https://users.metropolia.fi/~iaroslag/MeCrafterv2/) to view it in the browser.
