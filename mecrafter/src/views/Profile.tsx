@@ -1,13 +1,8 @@
 import UserInfo from "../components/UserInfo";
 import HabitInfo from "../components/HabitInfo";
-import { UserHabits } from "../types/DBTypes";
 import { useUserContext } from "../hooks/contextHooks";
 
-export default function Profile({
-  userHabits,
-}: {
-  userHabits: UserHabits | null;
-}) {
+export default function Profile() {
   const { user } = useUserContext();
   const { handleLogout } = useUserContext();
   return (
@@ -20,7 +15,7 @@ export default function Profile({
             <UserInfo user={user} />
           </div>
           <div className="row align-items-center justify-content-center">
-            <HabitInfo userHabits={userHabits} />
+            <HabitInfo />
           </div>
           <button className="btn btn-primary" onClick={handleLogout}>
             Sign out

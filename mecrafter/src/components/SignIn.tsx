@@ -1,13 +1,16 @@
+import { useState } from "react";
 import { useUserContext } from "../hooks/contextHooks";
-import { useForm } from "../hooks/formHooks";
 import { Values } from "../types/LocalTypes";
+import { useForm } from "../hooks/formHooks";
 
 const SignIn = () => {
   const { handleLogin } = useUserContext();
+  const [showPassword, setShowPassword] = useState(false); // State to control password visibility
   const values: Values = {
     username: "",
     password: "",
   };
+
   const doLogin = async () => {
     try {
       handleLogin(inputs as Values);
@@ -28,7 +31,19 @@ const SignIn = () => {
         </div>
         <div className="form-group">
           <label htmlFor="loginpassword">Password</label>
-          <input type="password" id="loginpassword" name="password" autoComplete="current-password" onChange={handleInputChange} />
+          <input
+            type={showPassword ? 'text' : 'password'} // Toggle between text and password
+            id="loginpassword"
+            name="password"
+            autoComplete="current-password"
+            onChange={handleInputChange}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)} // Toggle showPassword state
+          >
+            {showPassword ? 'Hide' : 'Show'}
+          </button>
         </div>
         <button type="submit" className="btn btn-primary">
           Login

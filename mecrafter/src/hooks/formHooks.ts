@@ -7,17 +7,25 @@ const useForm = (callback: () => void, initState: Record<string, string>) => {
     if (event) {
       event.preventDefault();
     }
+    console.log('inputs:', inputs);
     callback();
   };
 
   const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
     event.persist();
-    setInputs((inputs) => ({
-      ...inputs,
-      [event.target.name]: event.target.value,
-    }));
+    if (event.target.type === 'select-one') {
+      setInputs((inputs) => ({
+        ...inputs,
+        [event.target.name]: event.target.value,
+      }));
+    } else {
+      setInputs((inputs) => ({
+        ...inputs,
+        [event.target.name]: event.target.value,
+      }));
+    }
   };
 
   return {

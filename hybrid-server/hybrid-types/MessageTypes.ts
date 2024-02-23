@@ -1,3 +1,4 @@
+import { UnauthorizedUser, User, UserHabits } from "./DBTypes";
 
 type MessageResponse = {
   message: string;
@@ -11,6 +12,25 @@ type ErrorResponse = MessageResponse & {
 type LoginResponse = MessageResponse & {
   token: string;
   message: string;
+  user: UnauthorizedUser;
 };
 
-export type { MessageResponse, ErrorResponse, LoginResponse };
+type UserResponse = MessageResponse & {
+  user: UnauthorizedUser;
+};
+
+type UserDeleteResponse = MessageResponse & {
+  user: {
+    user_id: number;
+  };
+};
+
+type HabitResponse = MessageResponse & {
+  habit: UserHabits;
+};
+
+type FrequencyResponse = MessageResponse & {
+  habit_frequency: string;
+};
+
+export type { MessageResponse, ErrorResponse, LoginResponse, UserResponse, UserDeleteResponse, HabitResponse, FrequencyResponse };

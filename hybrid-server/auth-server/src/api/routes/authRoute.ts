@@ -1,9 +1,12 @@
-// import express from 'express';
-// import {body} from 'express-validator';
+import express from 'express';
+import {body} from 'express-validator';
+import { login } from '../controllers/authController';
 
 
-// const router = express.Router();
+const authRoute = express.Router();
 
-// router.post('/login', body('email').isEmail(), body('password').isLength({min: 5}), loginUser);
+authRoute.post('/login', body('username').isString().notEmpty().isLength({min: 3, max: 20}),
+body('password').isLength({min: 8, max: 20}).isString().notEmpty(),
+ login);
 
-// export default router;
+export default authRoute;

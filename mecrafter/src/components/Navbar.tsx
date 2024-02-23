@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
+import { useUserContext } from '../hooks/contextHooks';
 
 const Navbar = () => {
-    const token = localStorage.getItem('token');
+    const {user} = useUserContext();
+    const token = localStorage.getItem("token");
+    console.log(token);
     return (
             <div className="container">
                 <div className="row">
@@ -13,8 +16,9 @@ const Navbar = () => {
                              <li className="list-group-item"><Link to="/feed">Feed</Link></li>
                              <li className="list-group-item"><Link to="/explore">Explore</Link></li>
                             <li className="list-group-item"><Link to="/">Create new habit</Link></li>
-                            { token ? <li className="list-group-item"><Link to="/profile">Profile</Link></li> : null }
-                            { !token ? <li className="list-group-item"><Link to="/signup">Sign up</Link></li> : null }
+                            { user ? <li className="list-group-item"><Link to="/profile">Profile</Link></li> : null }
+                            { !user ? <li className="list-group-item"><Link to="/signup">Sign up</Link></li> : null }
+                            {user ? <li className='list-group-item'><Link to="/tracker">Tracker</Link></li> : null}
                         </ul>
                     </div>
                 </div>

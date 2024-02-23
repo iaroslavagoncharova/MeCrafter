@@ -1,9 +1,10 @@
 import { useState } from "react";
-import defaultHabits from "../habits";
 import { UserHabits } from "../types/DBTypes";
+import { useHabit } from "../hooks/apiHooks";
+import { useForm } from "../hooks/formHooks";
+import { useNavigate } from "react-router-dom";
 
 export default function Explore({
-  onAddHabit,
   selectedCategory,
   setSelectedCategory,
 }: {
@@ -13,7 +14,8 @@ export default function Explore({
 }) {
   const [filter, setFilter] = useState("");
   const [searchInput, setSearchInput] = useState("");
-  const filteredHabits = defaultHabits.filter(
+  const { habits } = useHabit();
+  const filteredHabits = habits.filter(
     (habit) =>
       (habit.habit_category === filter || filter === "") &&
       (habit.habit_category === selectedCategory || selectedCategory === "") &&
@@ -24,11 +26,34 @@ export default function Explore({
           .includes(searchInput.toLowerCase()))
   );
 
+  const values = { habit_id: "" };
+  const { updateHabit } = useHabit();
+  const navigate = useNavigate();
+
+  const changeHabit = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const habit = {
+        habit_id: inputs.habit_id,
+      };
+      console.log("habit:", habit, "token:", token);
+      if (token) {
+        await updateHabit(habit, token);
+        alert("Habit changed!");
+        navigate("/profile");
+      }
+    } catch (error) {
+      console.log((error as Error).message);
+    }
+  };
+
   const resetFilters = () => {
     setFilter("");
     setSelectedCategory("");
     setSearchInput("");
   };
+
+  const { handleSubmit, inputs } = useForm(changeHabit, values);
 
   return (
     <>
@@ -93,7 +118,10 @@ export default function Explore({
                         <p>Category: {habit.habit_category}</p>
                         <button
                           className="btn btn-primary btn-block"
-                          onClick={() => onAddHabit(habit)}
+                          onClick={(e) => {
+                            inputs.habit_id = habit.habit_id.toString();
+                            handleSubmit(e);
+                          }}
                         >
                           Add
                         </button>

@@ -1,4 +1,4 @@
-// import { useState } from 'react'
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./styles.css";
 import Feed from "./views/Feed";
@@ -10,7 +10,7 @@ import { UserHabits } from "./types/DBTypes";
 import { UserProvider } from "./contexts/UserContext";
 import Layout from "./views/Layout";
 import RegisterPage from "./views/AuthPage";
-import ProtectedRoute from "./components/ProtectedRoute";
+import HabitTracker from "./views/HabitTracker";
 
 const App = () => {
   const [userHabits, setUserHabits] = useState<UserHabits | null>(null);
@@ -25,20 +25,29 @@ const App = () => {
       <UserProvider>
         <Routes>
           <Route element={<Layout />}>
-          <Route path="/" element={<Main setSelectedCategory={setSelectedCategory} />} />
-          <Route path="/explore" element={<Explore onAddHabit={addHabit} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />} />
-          <Route path="/feed" element={<Feed />} />
-          <Route path="/profile" element={
-            <ProtectedRoute>
-              <Profile userHabits={userHabits} />
-            </ProtectedRoute>
-          } />
-          <Route path='/signup' element={<RegisterPage />} />
+            <Route
+              path="/"
+              element={<Main setSelectedCategory={setSelectedCategory} />}
+            />
+            <Route
+              path="/explore"
+              element={
+                <Explore
+                  onAddHabit={addHabit}
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={setSelectedCategory}
+                />
+              }
+            />
+            <Route path="/feed" element={<Feed />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/signup" element={<RegisterPage />} />
+            <Route path="/tracker" element={<HabitTracker />} />
           </Route>
         </Routes>
       </UserProvider>
     </Router>
   );
-}
+};
 
 export default App;
