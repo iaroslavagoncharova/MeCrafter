@@ -1,4 +1,4 @@
-import { MediaItem, User } from "./DBTypes";
+import { Post, User } from "./DBTypes";
 
 type MessageResponse = {
     message: string;
@@ -18,8 +18,8 @@ type MessageResponse = {
     user: User;
     };
 
-    type MediaResponse = MessageResponse & {
-      media: MediaItem | MediaItem[];
+    type PostResponse = MessageResponse & {
+      media: Post | Post[];
     };
   
     type UploadResponse = MessageResponse & {
@@ -30,4 +30,4 @@ type MessageResponse = {
       };
     };
 
-    export type { MessageResponse, ErrorResponse, LoginResponse , UserResponse, MediaResponse, UploadResponse }
+    export type { MessageResponse, ErrorResponse, LoginResponse , UserResponse, UploadResponse, PostResponse };

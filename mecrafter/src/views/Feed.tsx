@@ -1,10 +1,10 @@
 import CreatePost from "../components/CreatePost";
 import FeedPost from "../components/FeedPost";
-import { useMedia } from "../hooks/apiHooks";
+import { usePost } from "../hooks/apiHooks";
 import { Link } from "react-router-dom";
 
 export default function Feed() {
-  const { mediaArray } = useMedia();
+  const { postArray } = usePost();
   const token = localStorage.getItem("token");
   return (
     <div className="row justify-content-center">
@@ -21,8 +21,8 @@ export default function Feed() {
         </>
       )}
       <div className="col-md-8">
-      {mediaArray.map((item) => (
-        <FeedPost key={item.media_id} post={item} />
+      {postArray.map((post) => (
+        <FeedPost key={post.post_id} post={post} />
       ))}
       </div>
     </div>

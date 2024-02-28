@@ -1,17 +1,15 @@
 import React, { useState } from "react";
-import { useFile, useMedia } from "../hooks/apiHooks";
-import { useNavigate } from "react-router-dom";
+import { useFile, usePost } from "../hooks/apiHooks";
 import { useForm } from "../hooks/formHooks";
 
 const CreatePost = () => {
   const [file, setFile] = useState<File | null>(null);
   const { postFile } = useFile();
-  const { postMedia } = useMedia();
-  const navigate = useNavigate();
+  const { postPost } = usePost();
 
   const values = {
-    title: "",
-    description: "",
+    post_title: "",
+    post_text: "",
   };
 
   const upload = async () => {
@@ -20,10 +18,11 @@ const CreatePost = () => {
       if (!token || !file) {
         return;
       }
+      console.log(file, inputs, token);
       const fileResult = await postFile(file, token);
-      const mediaResult = await postMedia(fileResult, inputs, token);
-      alert(mediaResult.message);
-      navigate('/feed')
+      console.log(inputs);
+      const postResult = await postPost(fileResult, inputs, token);
+      alert(postResult.message);
     } catch (error) {
       console.log((error as Error).message);
     }
@@ -40,7 +39,7 @@ const CreatePost = () => {
   return (
     <div className="col-md-4">
       <div className="card">
-        <div className="card-body"  id="post-form">
+        <div className="card-body" id="post-form">
           <h5 className="card-title">Create a new post</h5>
           <p className="card-text">
             What's on your mind? Share it with the community!
@@ -49,26 +48,40 @@ const CreatePost = () => {
             <div className="form-group">
               <input
                 type="text"
-                name="title"
-                id="title"
+                name="post_title"
+                id="post_title"
                 placeholder="Title of your post"
                 onChange={handleInputChange}
               />
               <textarea
                 className="form-control"
-                id="postContent"
+                id="post_text"
+                name="post_text"
                 rows={3}
                 placeholder="Write your post here"
                 onChange={handleInputChange}
               ></textarea>
             </div>
             <div className="form-group">
-              <input type="file" className="form-control-file" id="postImage" accept="image/*, video/*"
-              onChange={handleFileChange} />
+              <input
+                name="file"
+                type="file"
+                className="form-control-file"
+                id="file"
+                accept="image/*, video/*"
+                onChange={handleFileChange}
+              />
             </div>
-            <img src={file ? URL.createObjectURL(file) : 'https://via.placeholder.com/200?text=Choose+image'}
-            alt="preview" width="200" />
-            <button id="post-btn" type="submit" className="btn btn-primary" disabled={file && inputs.title.length > 3 ? false : true} >
+            <img
+              src={
+                file
+                  ? URL.createObjectURL(file)
+                  : "https://via.placeholder.com/200?text=Choose+image"
+              }
+              alt="preview"
+              width="200"
+            />
+            <button id="post-btn" type="submit" className="btn btn-primary" disabled={file && inputs.post_title.length > 3 ? false : true} >
               Post
             </button>
           </form>

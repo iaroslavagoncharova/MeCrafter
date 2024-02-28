@@ -26,21 +26,23 @@ type UserHabits = {
   habit_category: string;
 }
 
-type MediaItem = {
-  media_id: number;
+// for media api
+
+type Post = {
+  post_id: number;
   user_id: number;
+  post_text: string;
+  post_title: string;
+  created_at: string;
   filename: string;
   thumbnail: string;
   filesize: number;
   media_type: string;
-  title: string;
-  description: string | null;
-  created_at: Date | string;
 };
 
 type Comment = {
   comment_id: number;
-  media_id: number;
+  post_id: number;
   user_id: number;
   comment_text: string;
   created_at: Date;
@@ -48,7 +50,7 @@ type Comment = {
 
 type Like = {
   like_id: number;
-  media_id: number;
+  post_id: number;
   user_id: number;
   created_at: Date;
 };
@@ -80,25 +82,25 @@ type UploadResult = {
   };
 };
 
-type MostLikedMedia = Pick<
-  MediaItem,
-  | "media_id"
-  | "filename"
-  | "filesize"
-  | "media_type"
-  | "title"
-  | "description"
-  | "created_at"
-> &
-  Pick<User, "user_id" | "username" | "email" | "created_at"> & {
-    likes_count: bigint;
-  };
+// type MostLikedMedia = Pick<
+//   MediaItem,
+//   | "media_id"
+//   | "filename"
+//   | "filesize"
+//   | "media_type"
+//   | "title"
+//   | "description"
+//   | "created_at"
+// > &
+//   Pick<User, "user_id" | "username" | "email" | "created_at"> & {
+//     likes_count: bigint;
+//   };
 
 // type gymnastics to get rid of user_level_id from User type and replace it with level_name from UserLevel type
 
 type TokenContent = Pick<User, "user_id">;
 
-type MediaItemWithOwner = MediaItem & Pick<User, "username">;
+// type MediaItemWithOwner = MediaItem & Pick<User, "username">;
 
 // for upload server
 type FileInfo = {
@@ -108,7 +110,6 @@ type FileInfo = {
 
 export type {
   User,
-  MediaItem,
   Comment,
   Like,
   Rating,
@@ -116,12 +117,11 @@ export type {
   MediaItemTag,
   TagResult,
   UploadResult,
-  MostLikedMedia,
   TokenContent,
-  MediaItemWithOwner,
   FileInfo,
   UnauthorizedUser,
   TokenUser,
   PutUserValues,
   UserHabits,
+  Post,
 };

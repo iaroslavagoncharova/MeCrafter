@@ -20,6 +20,8 @@ const HabitTracker = () => {
   const [habitLogs, setHabitLogs] = useState(0);
   let habit_description = null;
 
+  console.log(selectedDate, "selectedDate", habitLogs, "habitLogs");
+
 
   if (user?.habit_id) {
     const habit = habits.find((habit) => habit.habit_id === user.habit_id);
@@ -36,6 +38,7 @@ const HabitTracker = () => {
       console.log("Mark today's status");
       setLastClickedDate(new Date(currentDate));
       setIsDisabled(true);
+      setHabitLogs((prevHabitLogs) => prevHabitLogs + 1);
       setCompletedDates((prevCompletedDates: string[] | null) => [
         ...(prevCompletedDates || []),
         currentDate,
@@ -64,6 +67,17 @@ const HabitTracker = () => {
     localStorage.setItem("isDisabled", isDisabled.toString());
     localStorage.setItem("completedDates", JSON.stringify(completedDates));
   }, [lastClickedDate, isDisabled, completedDates]);
+
+  useEffect(() => {
+    const currentDate = new Date().toISOString().split("T")[0];
+    const lastClickedDateString = lastClickedDate
+      ? lastClickedDate.toISOString().split("T")[0]
+      : null;
+  
+    if (currentDate !== lastClickedDateString) {
+      setIsDisabled(false);
+    }
+  }, [lastClickedDate]);
 
   return (
     <div>

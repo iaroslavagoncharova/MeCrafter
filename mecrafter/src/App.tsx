@@ -18,6 +18,7 @@ const App = () => {
 
   const addHabit = (habit: UserHabits) => {
     setUserHabits(habit);
+    console.log(userHabits);
   };
 
   return (

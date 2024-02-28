@@ -21,18 +21,33 @@ type PutUserValues = {
     email?: string | null;
   };
 
-type MediaItem = {
-    media_id: number;
+  type Post = {
+    post_id: number;
     user_id: number;
-    username: string;
+    post_text: string;
+    post_title: string;
+    created_at: string;
     filename: string;
     thumbnail: string;
     filesize: number;
     media_type: string;
-    title: string;
-    description: string | null;
-    created_at: Date | string;
-}
-type MediaItemWithOwner = MediaItem & Pick<User, 'username'>
+  };
 
-export type { UserHabits, User, MediaItem, MediaItemWithOwner, UnauthorizedUser, PutUserValues }
+  type PostWithOwner = Post & Pick<User, 'username'>
+
+  type Like = {
+    like_id: number;
+    post_id: number;
+    user_id: number;
+    created_at: string;
+  };
+
+  type Comment = {
+    comment_id: number;
+    user_id: number;
+    post_id: number;
+    comment_text: string;
+    created_at: string;
+  };
+
+export type { UserHabits, User, UnauthorizedUser, PutUserValues, Post, PostWithOwner, Like, Comment }
