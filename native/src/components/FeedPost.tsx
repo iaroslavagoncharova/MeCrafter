@@ -84,7 +84,7 @@ const FeedPost = ({post}: {post: PostWithOwner}) => {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('EditPost', {post});
+                navigation.navigate('EditPost', post);
               }}
             >
               <Text style={styles.actionButton}>Edit</Text>

@@ -9,3 +9,5 @@
 ![ExploreHabits](screenshots/explore.jpg)
 ![ResizeImage](screenshots/cut.jpg)
 ![PostCreated](screenshots/created.jpg)
+![UpdatePost](screenshots/update_values.jpg)
+![PostUpdated](screenshots/update.jpg)

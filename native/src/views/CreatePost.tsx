@@ -127,8 +127,8 @@ export default function CreatePost() {
             <Video source={{uri: image.assets![0]?.uri}} style={{width: 200, height: 200}} useNativeControls />
           ) : (
             <Card.Image
-            onPress={chooseImage}
-            style={{aspectRatio: 1, height: 200}}
+              onPress={chooseImage}
+              style={{aspectRatio: 1, height: 200}}
               source={{uri: image ? image.assets?.[0]?.uri : 'https://via.placeholder.com/150?text=Select+image'}}
             />
           )}

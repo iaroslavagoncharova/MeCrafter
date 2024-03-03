@@ -30,47 +30,4 @@ const AuthPage = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  authPageContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  authSwitchButtonsContainer: {
-    marginBottom: 20,
-  },
-  authSwitchButtons: {
-    flexDirection: 'row',
-  },
-  authSwitchButton: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 10,
-    backgroundColor: '#007bff',
-  },
-  activeButton: {
-    backgroundColor: '#0056b3',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-});
-
 export default AuthPage;
-
-// import { View, Text } from 'react-native'
-// import React from 'react'
-
-// export default function AuthPage() {
-//   return (
-//     <View>
-//       <Text>AuthPage</Text>
-//     </View>
-//   )
-// }

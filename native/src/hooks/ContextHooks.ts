@@ -10,14 +10,4 @@ const useUserContext = () => {
 
     return context;
 };
-
-// const useHabitContext = () => {
-//     const context = useContext(HabitContext);
-//     if (!context) {
-//         throw new Error('useHabitContext must be used within an HabitProvider');
-//     }
-
-//     return context;
-// }
-
 export { useUserContext };
