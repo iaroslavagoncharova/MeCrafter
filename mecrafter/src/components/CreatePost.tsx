@@ -18,9 +18,7 @@ const CreatePost = () => {
       if (!token || !file) {
         return;
       }
-      console.log(file, inputs, token);
       const fileResult = await postFile(file, token);
-      console.log(inputs);
       const postResult = await postPost(fileResult, inputs, token);
       alert(postResult.message);
     } catch (error) {

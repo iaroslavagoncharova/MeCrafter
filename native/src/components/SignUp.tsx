@@ -1,5 +1,5 @@
-import { View, Text, Alert, TouchableOpacity } from 'react-native'
-import React, {useState} from 'react'
+import {View, Text, Alert, TouchableOpacity} from 'react-native';
+import React, {useState} from 'react';
 import {useUser} from '../hooks/apiHooks';
 import {Controller, useForm} from 'react-hook-form';
 import {Input} from '@rneui/base';
@@ -62,41 +62,42 @@ const SignUp = ({handleToggle}: {handleToggle: () => void}) => {
           />
         )}
         name="username"
-        rules={{required: {
-          value: true,
-          message: 'Username is required',
-        },
-        validate: async (value) => {
-          try {
-            const {available} = await getUsernameAvailability(value);
-            return available ? available : 'Username not available';
-          } catch (error) {
-            console.log((error as Error).message);
-          }
-        },
-}
-        }
+        rules={{
+          required: {
+            value: true,
+            message: 'Username is required',
+          },
+          validate: async (value) => {
+            try {
+              const {available} = await getUsernameAvailability(value);
+              return available ? available : 'Username not available';
+            } catch (error) {
+              console.log((error as Error).message);
+            }
+          },
+        }}
       />
       <Controller
         control={control}
         name="email"
-        rules={{required: {
-          value: true,
-          message: 'Email is required',
-        }, pattern: {
-          value: /\S+@\S+\.\S+/,
-          message: 'Invalid email address',
-        },
-        validate: async (value) => {
-          try {
-            const {available} = await getEmailAvailability(value);
-            return available ? available : 'Email already in use';
-          } catch (error) {
-            console.log((error as Error).message);
-          }
-        },
-        }
-      }
+        rules={{
+          required: {
+            value: true,
+            message: 'Email is required',
+          },
+          pattern: {
+            value: /\S+@\S+\.\S+/,
+            message: 'Invalid email address',
+          },
+          validate: async (value) => {
+            try {
+              const {available} = await getEmailAvailability(value);
+              return available ? available : 'Email already in use';
+            } catch (error) {
+              console.log((error as Error).message);
+            }
+          },
+        }}
         render={({field: {onChange, onBlur, value}}) => (
           <Input
             style={styles.input}
@@ -104,8 +105,8 @@ const SignUp = ({handleToggle}: {handleToggle: () => void}) => {
             onChangeText={onChange}
             value={value}
             placeholder="Email"
-            autoCapitalize='none'
-            errorMessage='Email is required'
+            autoCapitalize="none"
+            errorMessage="Email is required"
           />
         )}
       />
@@ -122,16 +123,18 @@ const SignUp = ({handleToggle}: {handleToggle: () => void}) => {
           />
         )}
         name="password"
-        rules={{required: {
-          value: true,
-          message: 'Password is required',
-        },
-        minLength: {
-          value: 8,
-          message: 'Password must be at least 8 characters long',
-        },
-        validate: (value) => value === getValues('confirmPassword') || 'Passwords do not match',
-      }}
+        rules={{
+          required: {
+            value: true,
+            message: 'Password is required',
+          },
+          minLength: {
+            value: 8,
+            message: 'Password must be at least 8 characters long',
+          },
+          validate: (value) =>
+            value === getValues('confirmPassword') || 'Passwords do not match',
+        }}
       />
       <Controller
         control={control}
@@ -153,7 +156,8 @@ const SignUp = ({handleToggle}: {handleToggle: () => void}) => {
       />
       <TouchableOpacity
         style={styles.signupButton}
-        onPress={handleSubmit(register)}>
+        onPress={handleSubmit(register)}
+      >
         <Text>Signup</Text>
       </TouchableOpacity>
     </View>

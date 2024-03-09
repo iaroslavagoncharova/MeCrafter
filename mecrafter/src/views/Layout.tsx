@@ -6,7 +6,6 @@ const Layout = () => {
   const { user, handleAutoLogin } = useUserContext();
   const token = localStorage.getItem("token");
   console.log(token);
-  console.log(user);
 
   if (!user) {
     handleAutoLogin();

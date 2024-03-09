@@ -36,7 +36,6 @@ export default function Explore({
       const habit = {
         habit_id: inputs.habit_id,
       };
-      console.log("habit:", habit, "token:", token);
       if (token) {
         await updateHabit(habit, token);
         alert("Habit changed!");

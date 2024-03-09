@@ -11,9 +11,12 @@ import {
 import {
   Comment,
   Like,
+  Message,
   Post,
   PostWithOwner,
+  Prompt,
   PutUserValues,
+  ReflectionWithPrompt,
   User,
   UserHabits,
 } from "../types/DBTypes";
@@ -39,7 +42,6 @@ const usePost = () => {
         })
       );
       setPostArray(postsWithOwner);
-      console.log("postArray updated:", postArray);
     } catch (error) {
       console.error("getPosts failed", error);
     }
@@ -71,7 +73,6 @@ const usePost = () => {
       },
       body: JSON.stringify(post),
     };
-    console.log(options);
     return fetchData<PostResponse>(
       import.meta.env.VITE_MEDIA_API + "/posts",
       options
@@ -134,7 +135,9 @@ const usePost = () => {
 
 const useUser = () => {
   const getUserById = async (id: number) => {
-    return await fetchData<User>(import.meta.env.VITE_AUTH_API + "/users/" + id);
+    return await fetchData<User>(
+      import.meta.env.VITE_AUTH_API + "/users/" + id
+    );
   };
 
   const getUserByToken = async (token: string) => {
@@ -161,7 +164,6 @@ const useUser = () => {
   };
 
   const putUser = async (user: PutUserValues, token: string) => {
-    console.log(user);
     const options: RequestInit = {
       method: "PUT",
       headers: {
@@ -171,7 +173,6 @@ const useUser = () => {
       body: JSON.stringify(user),
     };
     await fetchData(import.meta.env.VITE_AUTH_API + "/users", options);
-    console.log(user, token);
   };
 
   const deleteUser = async (token: string) => {
@@ -235,8 +236,6 @@ const useFile = () => {
       },
       body: formData,
     };
-    console.log(options, import.meta.env.VITE_UPLOAD_SERVER + "/upload");
-    console.log(formData, "formData", file, "file");
     return await fetchData<UploadResponse>(
       import.meta.env.VITE_UPLOAD_SERVER + "/upload",
       options
@@ -282,6 +281,18 @@ const useHabit = () => {
     return await fetchData(import.meta.env.VITE_AUTH_API + "/habits", options);
   };
 
+  const postPrivateHabit = async (habit: Record<string, string>, token: string) => {
+    const options: RequestInit = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      body: JSON.stringify(habit),
+    };
+    return await fetchData(import.meta.env.VITE_AUTH_API + "/habits/private", options)
+  }
+
   const postFrequency = async (
     frequency: Record<string, string>,
     token: string
@@ -309,18 +320,14 @@ const useHabit = () => {
       },
       body: JSON.stringify(habit),
     };
-    console.log(habit);
-    console.log(options);
-    console.log(import.meta.env.VITE_AUTH_API + "/habits/habit" + options);
     const result = await fetchData(
       import.meta.env.VITE_AUTH_API + "/habits/habit",
       options
     );
-    console.log(result);
     return result;
   };
 
-  return { getCreated, postHabit, postFrequency, habits, updateHabit };
+  return { getCreated, postHabit, postFrequency, habits, updateHabit, postPrivateHabit};
 };
 
 const useLike = () => {
@@ -341,20 +348,19 @@ const useLike = () => {
   };
 
   const getCountByPost = async (post_id: number) => {
-    return await fetchData<{count: number}>(
-      import.meta.env.VITE_MEDIA_API + "/likes/count/" + post_id,
-    )
+    return await fetchData<{ count: number }>(
+      import.meta.env.VITE_MEDIA_API + "/likes/count/" + post_id
+    );
   };
 
-  const getLikeByUser = async (post_id: number, token: string) => {
+  const getLikeByUserAndPost = async (post_id: number, token: string) => {
     const options: RequestInit = {
-      method: "GET",
       headers: {
         Authorization: "Bearer " + token,
       },
     };
     return await fetchData<Like>(
-      import.meta.env.VITE_MEDIA_API + "/likes/bypost/user" + post_id,
+      import.meta.env.VITE_MEDIA_API + "/likes/bypost/" + post_id,
       options
     );
   };
@@ -371,14 +377,15 @@ const useLike = () => {
       options
     );
   };
-  return { postLike, getCountByPost, getLikeByUser, deleteLike };
+  return { postLike, getCountByPost, getLikeByUserAndPost, deleteLike };
 };
 
 const useComment = () => {
   const postComment = async (
     comment_text: string,
     post_id: number,
-    token: string) => {
+    token: string
+  ) => {
     const options: RequestInit = {
       method: "POST",
       headers: {
@@ -392,24 +399,135 @@ const useComment = () => {
       import.meta.env.VITE_MEDIA_API + "/comments",
       options
     );
+  };
+
+  const { getUserById } = useUser();
+
+  const getCommentsByPostId = async (post_id: number) => {
+    const comments = await fetchData<Comment[]>(
+      import.meta.env.VITE_MEDIA_API + "/comments/bypost/" + post_id
+    );
+    const commentsWithUser = await Promise.all<Comment & { username: string }>(
+      comments.map(async (comment) => {
+        const user = await getUserById(comment.user_id);
+        return { ...comment, username: user.username };
+      })
+    );
+    return commentsWithUser;
+  };
+
+  const getComments = async () => {
+    const result = await fetchData<Comment[]>(
+      import.meta.env.VITE_MEDIA_API + "/comments"
+    );
+    const commentsWithUser = await Promise.all<Comment & { username: string }>(
+      result.map(async (comment) => {
+        const user = await getUserById(comment.user_id);
+        return { ...comment, username: user.username };
+      })
+    );
+    return commentsWithUser;
+  };
+
+  const deleteComment = async (comment_id: number, token: string) => {
+    const options: RequestInit = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+    };
+    return await fetchData<MessageResponse>(
+      import.meta.env.VITE_MEDIA_API + "/comments/" + comment_id,
+      options
+    );
+  };
+
+  return { postComment, getCommentsByPostId, getComments, deleteComment };
 };
 
-const {getUserById} = useUser();
+const useReflection = () => {
+  const postReflection = async (
+    reflection_text: string,
+    prompt_id: number,
+    token: string
+  ) => {
+    const options: RequestInit = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      body: JSON.stringify({ reflection_text, prompt_id }),
+    };
 
-const getCommentsByPostId = async (post_id: number) => {
-  const comments = await fetchData<Comment[]>(
-    import.meta.env.VITE_MEDIA_API + "/comments/bypost/" + post_id,
-  );
-  const commentsWithUser = await Promise.all<Comment & {username: string}>(
-    comments.map(async (comment) => {
-      const user = await getUserById(comment.user_id);
-      return {...comment, username: user.username};
+    console.log(reflection_text);
+    return await fetchData<MessageResponse>(
+      import.meta.env.VITE_MEDIA_API + "/reflections",
+      options
+    );
+  };
+
+  const getReflectionsByUser = async (user_id: number, token: string) => {
+    try {
+      const options = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+      const result = await fetchData<ReflectionWithPrompt[]>(
+        import.meta.env.VITE_MEDIA_API + "/reflections/byuser/" + user_id,
+        options
+      );
+      return result;
+    } catch (error) {
+      console.error("getReflectionsByUser failed", error);
     }
-  ));
-  return commentsWithUser;
+  };
+
+  return { postReflection, getReflectionsByUser };
 };
 
-
-return { postComment, getCommentsByPostId };
+const usePrompt = () => {
+  const [promptList, setPromptList] = useState<Prompt[]>([]);
+  const getPrompts = async () => {
+    const result = await fetchData<Prompt[]>(
+      import.meta.env.VITE_MEDIA_API + "/reflections/prompts"
+    );
+    setPromptList(result);
+    console.log(result);
+    return result;
+  };
+  useEffect(() => {
+    getPrompts();
+  }, []);
+  return { promptList, getPrompts };
 };
-export { useUser, useAuth, useFile, useHabit, usePost, useLike, useComment };
+
+const useMessage = () => {
+  const [messages, setMessages] = useState<Message | null>(null);
+  const getMessages = async () => {
+    const result = await fetchData<Message>(
+      import.meta.env.VITE_MEDIA_API + "/messages"
+    );
+    setMessages(result);
+  };
+
+  useEffect(() => {
+    getMessages();
+  }, []);
+
+  return { getMessages, messages };
+};
+export {
+  useUser,
+  useAuth,
+  useFile,
+  useHabit,
+  usePost,
+  useLike,
+  useComment,
+  useReflection,
+  usePrompt,
+  useMessage,
+};

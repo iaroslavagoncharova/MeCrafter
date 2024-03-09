@@ -1,6 +1,7 @@
 import { useEffect, useReducer } from "react";
 import { PostWithOwner, Like } from "../types/DBTypes";
 import { useLike } from "../hooks/apiHooks";
+import { useUserContext } from "../hooks/contextHooks";
 
 type LikeState = {
   count: number;
@@ -33,13 +34,15 @@ const likeReducer = (state: LikeState, action: LikeAction): LikeState => {
 
 const Likes = ({ post }: { post: PostWithOwner }) => {
   const [likeState, likeDispatch] = useReducer(likeReducer, likeInitialState);
-  const { postLike, getCountByPost, getLikeByUser, deleteLike } = useLike();
-
+  const { postLike, getCountByPost, getLikeByUserAndPost, deleteLike } =
+    useLike();
+  const { user } = useUserContext();
   const getLikes = async () => {
     const token = localStorage.getItem("token");
-    if (!post || !token) return;
+    if (!post || !token || !user) return;
     try {
-      const userLike = await getLikeByUser(post.post_id, token);
+      const userLike = await getLikeByUserAndPost(post.post_id, token);
+      console.log(userLike);
       likeDispatch({ type: "userLike", userLike: userLike });
     } catch (error) {
       likeDispatch({ type: "userLike", userLike: null });
@@ -65,7 +68,11 @@ const Likes = ({ post }: { post: PostWithOwner }) => {
   const handleLike = async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!post || !token) return;
+      if (!post || !token || !user) return;
+      if (user.user_id === post.user_id) {
+        alert("You can't like your own post");
+        return;
+      }
       if (likeState.userLike) {
         await deleteLike(likeState.userLike.like_id, token);
         likeDispatch({ type: "setLikeCount", count: likeState.count - 1 });
@@ -83,8 +90,11 @@ const Likes = ({ post }: { post: PostWithOwner }) => {
   return (
     <>
       Likes: {likeState.count}
-      <button onClick={handleLike}>Like</button>
-      {likeState.userLike ? "Unlike" : "Like"}
+      {user?.user_id === post.user_id ? null : likeState.userLike ? (
+        <button onClick={handleLike}>Unlike</button>
+      ) : (
+        <button onClick={handleLike}>Like</button>
+      )}
     </>
   );
 };

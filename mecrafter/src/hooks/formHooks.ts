@@ -7,7 +7,6 @@ const useForm = (callback: () => void, initState: Record<string, string>) => {
     if (event) {
       event.preventDefault();
     }
-    console.log('inputs:', inputs);
     callback();
   };
 

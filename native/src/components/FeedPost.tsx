@@ -21,7 +21,7 @@ import useUpdateContext from '../hooks/updateHooks';
 import {Feather} from '@expo/vector-icons';
 
 const FeedPost = ({post}: {post: PostWithOwner}) => {
-  const navigation = useNavigation();
+  const navigation: NavigationProp<ParamListBase> = useNavigation();
   const {user} = useUserContext();
   const {putPost, deletePost} = usePost();
   const [editing, setEditing] = useState(false);

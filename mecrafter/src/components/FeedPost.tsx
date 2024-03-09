@@ -29,7 +29,6 @@ const FeedPost = (props: { post: PostWithOwner }) => {
       }
       const result = await deletePost(post.post_id, token);
       alert(result.message);
-      console.log(result, "result");
     } catch (error) {
       console.log((error as Error).message);
     }
@@ -70,7 +69,7 @@ const FeedPost = (props: { post: PostWithOwner }) => {
                     alt={post.post_title}
                     className="img-fluid mx-auto d-block"
                   />
-                  {user?.user_id === post.user_id ? (
+                  {user?.user_id === post.user_id && (
                     <>
                       <button className="btn btn-danger" onClick={handleDelete}>
                         Delete
@@ -82,26 +81,9 @@ const FeedPost = (props: { post: PostWithOwner }) => {
                         Edit
                       </button>
                     </>
-                  ) : (
-                    <>
-                      <Likes post={post} />
-                      <Comments post={post} />
-                      <button
-                        className="btn btn-primary"
-                        onClick={() => {
-                          if (user) {
-                            console.log("Comment on post", post.post_id);
-                          } else {
-                            alert(
-                              "You need to be logged in to comment on a post"
-                            );
-                          }
-                        }}
-                      >
-                        Comment
-                      </button>
-                    </>
                   )}
+                  <Likes post={post} />
+                  <Comments post={post} />
                 </li>
               </ul>
             </div>
@@ -138,15 +120,6 @@ const FeedPost = (props: { post: PostWithOwner }) => {
               </ul>
             </div>
           )}
-          <div className="col-md-1">
-            <p>Likes: 50</p>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-md-12">
-            <h3>Comments</h3>
-            <Comments post={post} />
-          </div>
         </div>
       </div>
     </div>

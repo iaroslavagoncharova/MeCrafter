@@ -11,6 +11,8 @@ import { UserProvider } from "./contexts/UserContext";
 import Layout from "./views/Layout";
 import RegisterPage from "./views/AuthPage";
 import HabitTracker from "./views/HabitTracker";
+import Diary from "./views/Reflections";
+import Reflections from "./views/Reflections";
 
 const App = () => {
   const [userHabits, setUserHabits] = useState<UserHabits | null>(null);
@@ -44,6 +46,7 @@ const App = () => {
             <Route path="/profile" element={<Profile />} />
             <Route path="/signup" element={<RegisterPage />} />
             <Route path="/tracker" element={<HabitTracker />} />
+            <Route path="/reflections" element={<Reflections />} />
           </Route>
         </Routes>
       </UserProvider>

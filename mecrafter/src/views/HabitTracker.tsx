@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { useHabit } from "../hooks/apiHooks";
+import { useHabit, useMessage } from "../hooks/apiHooks";
 import { useUserContext } from "../hooks/contextHooks";
 import Calendar from "react-calendar";
 
 const HabitTracker = () => {
   const { habits } = useHabit();
   const { user } = useUserContext();
+  const { messages } = useMessage();
+  console.log(messages);
   const [lastClickedDate, setLastClickedDate] = useState(() => {
     const storedDate = localStorage.getItem("lastClickedDate");
     return storedDate ? new Date(storedDate) : null;
@@ -22,7 +24,6 @@ const HabitTracker = () => {
 
   console.log(selectedDate, "selectedDate", habitLogs, "habitLogs");
 
-
   if (user?.habit_id) {
     const habit = habits.find((habit) => habit.habit_id === user.habit_id);
     habit_description = habit?.habit_description;
@@ -35,7 +36,6 @@ const HabitTracker = () => {
       !lastClickedDate ||
       lastClickedDate.toISOString().split("T")[0] !== currentDate
     ) {
-      console.log("Mark today's status");
       setLastClickedDate(new Date(currentDate));
       setIsDisabled(true);
       setHabitLogs((prevHabitLogs) => prevHabitLogs + 1);
@@ -73,7 +73,7 @@ const HabitTracker = () => {
     const lastClickedDateString = lastClickedDate
       ? lastClickedDate.toISOString().split("T")[0]
       : null;
-  
+
     if (currentDate !== lastClickedDateString) {
       setIsDisabled(false);
     }
@@ -107,6 +107,9 @@ const HabitTracker = () => {
           ) : null;
         }}
       />
+      <h4 className="text-center">Your motivational message of the day:</h4>
+      <p>{messages?.message_text}</p>
+      <p>{messages?.message_author}</p>
       {habitLogs >= (user?.habit_frequency ?? 0) && (
         <p>
           Congratulations! You've reached your habit frequency goal for the

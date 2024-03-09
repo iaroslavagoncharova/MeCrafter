@@ -1,5 +1,7 @@
 import {Request, Response, NextFunction} from 'express';
 import {
+  createComment,
+  deleteCommentById,
   getComments,
   getCommentsByPostId,
   getCommentsByUserId,
@@ -7,6 +9,7 @@ import {
 } from '../models/commentModel';
 import {Comment, TokenUser} from '@sharedTypes/DBTypes';
 import CustomError from '../../classes/CustomError';
+import {CommentResponse, MessageResponse} from '@sharedTypes/MessageTypes';
 const getAllComments = async (
   req: Request,
   res: Response<Comment[]>,
@@ -75,9 +78,49 @@ const getCommentsOfUser = async (
   }
 };
 
+const postComment = async (
+  req: Request<{}, {}, Omit<Comment, 'comment_id'>>,
+  res: Response<CommentResponse, {user: TokenUser}>,
+  next: NextFunction
+) => {
+  try {
+    req.body.user_id = res.locals.user.user_id;
+    const comment = await createComment(req.body);
+    if (comment) {
+      res.json({message: 'Comment created', comment});
+      return;
+    }
+    next(new CustomError('Comment not created', 500));
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteComment = async (
+  req: Request<{id: string}>,
+  res: Response<MessageResponse, {user: TokenUser; token: string}>,
+  next: NextFunction
+) => {
+  try {
+    const id = Number(req.params.id);
+    const result = await deleteCommentById(
+      id,
+      res.locals.user.user_id,
+      res.locals.token
+    );
+    if (result) {
+      res.json({message: 'Comment deleted'});
+      return;
+    }
+  } catch (error) {
+    next(error);
+  }
+};
 export {
   getAllComments,
   getCommentsForPost,
   getCommentsCountForPost,
   getCommentsOfUser,
+  postComment,
+  deleteComment,
 };

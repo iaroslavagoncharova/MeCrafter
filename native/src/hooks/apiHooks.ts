@@ -1,5 +1,4 @@
 import {useEffect, useState} from 'react';
-import * as FileSystem from 'expo-file-system';
 import {fetchData} from '../lib/functions';
 import {Values} from '../types/LocalTypes';
 import {
@@ -12,35 +11,35 @@ import {
 import {
   Comment,
   Like,
+  Message,
   Post,
   PostWithOwner,
+  Prompt,
   PutUserValues,
+  ReflectionWithPrompt,
   User,
   UserHabits,
 } from '../types/DBTypes';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import useUpdateContext from './updateHooks';
 
 const usePost = () => {
   const [postArray, setPostArray] = useState<PostWithOwner[]>([]);
-  const {update} = useUpdateContext();
 
   const getPosts = async () => {
     try {
       const posts = await fetchData<Post[]>(
-        process.env.EXPO_PUBLIC_MEDIA_API + '/posts'
+        process.env.EXPO_PUBLIC_MEDIA_API + '/posts',
       );
       const postsWithOwner: PostWithOwner[] = await Promise.all(
         posts.map(async (post) => {
           const owner = await fetchData<User>(
-            process.env.EXPO_PUBLIC_AUTH_API + '/users/' + post.user_id
+            process.env.EXPO_PUBLIC_AUTH_API + '/users/' + post.user_id,
           );
           const postWithOwner: PostWithOwner = {
             ...post,
             username: owner.username,
           };
           return postWithOwner;
-        })
+        }),
       );
       setPostArray(postsWithOwner);
     } catch (error) {
@@ -50,12 +49,12 @@ const usePost = () => {
 
   useEffect(() => {
     getPosts();
-  }, [update]);
+  }, []);
 
   const postPost = (
     file: UploadResponse,
     inputs: Record<string, string>,
-    token: string
+    token: string,
   ) => {
     const post: Omit<Post, 'post_id' | 'user_id' | 'thumbnail' | 'created_at'> =
       {
@@ -76,14 +75,14 @@ const usePost = () => {
     };
     return fetchData<PostResponse>(
       process.env.EXPO_PUBLIC_MEDIA_API + '/posts',
-      options
+      options,
     );
   };
 
   const putPost = async (
     id: number,
     inputs: Record<string, string>,
-    token: string
+    token: string,
   ): Promise<PostResponse> => {
     let post = {};
     if (inputs.post_title && inputs.post_text) {
@@ -110,13 +109,13 @@ const usePost = () => {
     };
     return await fetchData(
       process.env.EXPO_PUBLIC_MEDIA_API + '/posts/' + id,
-      options
+      options,
     );
   };
 
   const deletePost = async (
     id: number,
-    token: string
+    token: string,
   ): Promise<MessageResponse> => {
     const options: RequestInit = {
       method: 'DELETE',
@@ -127,7 +126,7 @@ const usePost = () => {
     };
     return await fetchData(
       process.env.EXPO_PUBLIC_MEDIA_API + '/posts/' + id,
-      options
+      options,
     );
   };
 
@@ -137,7 +136,7 @@ const usePost = () => {
 const useUser = () => {
   const getUserById = async (id: number) => {
     return await fetchData<User>(
-      process.env.EXPO_PUBLIC_AUTH_API + '/users/' + id
+      process.env.EXPO_PUBLIC_AUTH_API + '/users/' + id,
     );
   };
 
@@ -148,8 +147,8 @@ const useUser = () => {
       },
     };
     return await fetchData<UserResponse>(
-      process.env.EXPO_PUBLIC_AUTH_API + '/users/token',
-      options
+      process.env.EXPO_PUBLIC_AUTH_API + '/auth/user',
+      options,
     );
   };
 
@@ -189,13 +188,13 @@ const useUser = () => {
 
   const getUsernameAvailability = async (username: string) => {
     return await fetchData<{available: boolean}>(
-      process.env.EXPO_PUBLIC_AUTH_API + '/users/username/' + username
+      process.env.EXPO_PUBLIC_AUTH_API + '/users/username/' + username,
     );
   };
 
   const getEmailAvailability = async (email: string) => {
     return await fetchData<{available: boolean}>(
-      process.env.EXPO_PUBLIC_AUTH_API + '/users/email/' + email
+      process.env.EXPO_PUBLIC_AUTH_API + '/users/email/' + email,
     );
   };
   return {
@@ -220,7 +219,7 @@ const useAuth = () => {
     };
     return await fetchData<LoginResponse>(
       process.env.EXPO_PUBLIC_AUTH_API + '/auth/login',
-      options
+      options,
     );
   };
   return {postLogin};
@@ -239,30 +238,11 @@ const useFile = () => {
     };
     return await fetchData<UploadResponse>(
       process.env.EXPO_PUBLIC_UPLOAD_SERVER + '/upload',
-      options
+      options,
     );
   };
 
-  const postExpoFile = async (
-    imageUri: string,
-    token: string
-  ): Promise<UploadResponse> => {
-    const result = await FileSystem.uploadAsync(
-      process.env.EXPO_PUBLIC_UPLOAD_SERVER + '/upload',
-      imageUri,
-      {
-        httpMethod: 'POST',
-        uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-        fieldName: 'file',
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
-      }
-    );
-    return JSON.parse(result.body);
-  };
-
-  return {postFile, postExpoFile};
+  return {postFile};
 };
 
 const useHabit = () => {
@@ -272,12 +252,12 @@ const useHabit = () => {
     try {
       const options = {
         headers: {
-          Authorization: 'Bearer ' + await AsyncStorage.getItem('token'),
+          Authorization: 'Bearer ' + localStorage.getItem('token'),
         },
       };
       const createdHabits = await fetchData<UserHabits[]>(
         process.env.EXPO_PUBLIC_AUTH_API + '/habits',
-        options
+        options,
       );
       setHabits(createdHabits);
     } catch (error) {
@@ -300,13 +280,31 @@ const useHabit = () => {
     };
     return await fetchData(
       process.env.EXPO_PUBLIC_AUTH_API + '/habits',
-      options
+      options,
+    );
+  };
+
+  const postPrivateHabit = async (
+    habit: Record<string, string>,
+    token: string,
+  ) => {
+    const options: RequestInit = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+      body: JSON.stringify(habit),
+    };
+    return await fetchData(
+      process.env.EXPO_PUBLIC_AUTH_API + '/habits/private',
+      options,
     );
   };
 
   const postFrequency = async (
     frequency: Record<string, string>,
-    token: string
+    token: string,
   ) => {
     const options: RequestInit = {
       method: 'POST',
@@ -318,11 +316,11 @@ const useHabit = () => {
     };
     return await fetchData(
       process.env.EXPO_PUBLIC_AUTH_API + '/habits/frequency',
-      options
+      options,
     );
   };
 
-  const updateHabit = async (habit: Record<string, string>, token: string): Promise<MessageResponse> => {
+  const updateHabit = async (habit: Record<string, string>, token: string) => {
     const options: RequestInit = {
       method: 'PUT',
       headers: {
@@ -331,14 +329,21 @@ const useHabit = () => {
       },
       body: JSON.stringify(habit),
     };
-    const result = await fetchData<MessageResponse>(
+    const result = await fetchData(
       process.env.EXPO_PUBLIC_AUTH_API + '/habits/habit',
-      options
+      options,
     );
     return result;
   };
 
-  return {getCreated, postHabit, postFrequency, habits, updateHabit};
+  return {
+    getCreated,
+    postHabit,
+    postFrequency,
+    habits,
+    updateHabit,
+    postPrivateHabit,
+  };
 };
 
 const useLike = () => {
@@ -354,26 +359,25 @@ const useLike = () => {
 
     return await fetchData<MessageResponse>(
       process.env.EXPO_PUBLIC_MEDIA_API + '/likes',
-      options
+      options,
     );
   };
 
   const getCountByPost = async (post_id: number) => {
     return await fetchData<{count: number}>(
-      process.env.EXPO_PUBLIC_MEDIA_API + '/likes/count/' + post_id
+      process.env.EXPO_PUBLIC_MEDIA_API + '/likes/count/' + post_id,
     );
   };
 
-  const getLikeByUser = async (post_id: number, token: string) => {
+  const getLikeByUserAndPost = async (post_id: number, token: string) => {
     const options: RequestInit = {
-      method: 'GET',
       headers: {
         Authorization: 'Bearer ' + token,
       },
     };
     return await fetchData<Like>(
-      process.env.EXPO_PUBLIC_MEDIA_API + '/likes/bypost/user' + post_id,
-      options
+      process.env.EXPO_PUBLIC_MEDIA_API + '/likes/bypost/' + post_id,
+      options,
     );
   };
 
@@ -386,17 +390,17 @@ const useLike = () => {
     };
     return await fetchData<MessageResponse>(
       process.env.EXPO_PUBLIC_MEDIA_API + '/likes/' + like_id,
-      options
+      options,
     );
   };
-  return {postLike, getCountByPost, getLikeByUser, deleteLike};
+  return {postLike, getCountByPost, getLikeByUserAndPost, deleteLike};
 };
 
 const useComment = () => {
   const postComment = async (
     comment_text: string,
     post_id: number,
-    token: string
+    token: string,
   ) => {
     const options: RequestInit = {
       method: 'POST',
@@ -409,7 +413,7 @@ const useComment = () => {
 
     return await fetchData<MessageResponse>(
       process.env.EXPO_PUBLIC_MEDIA_API + '/comments',
-      options
+      options,
     );
   };
 
@@ -417,17 +421,129 @@ const useComment = () => {
 
   const getCommentsByPostId = async (post_id: number) => {
     const comments = await fetchData<Comment[]>(
-      process.env.EXPO_PUBLIC_MEDIA_API + '/comments/bypost/' + post_id
+      process.env.EXPO_PUBLIC_MEDIA_API + '/comments/bypost/' + post_id,
     );
     const commentsWithUser = await Promise.all<Comment & {username: string}>(
       comments.map(async (comment) => {
         const user = await getUserById(comment.user_id);
         return {...comment, username: user.username};
-      })
+      }),
     );
     return commentsWithUser;
   };
 
-  return {postComment, getCommentsByPostId};
+  const getComments = async () => {
+    const result = await fetchData<Comment[]>(
+      process.env.EXPO_PUBLIC_MEDIA_API + '/comments',
+    );
+    const commentsWithUser = await Promise.all<Comment & {username: string}>(
+      result.map(async (comment) => {
+        const user = await getUserById(comment.user_id);
+        return {...comment, username: user.username};
+      }),
+    );
+    return commentsWithUser;
+  };
+
+  const deleteComment = async (comment_id: number, token: string) => {
+    const options: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+    };
+    return await fetchData<MessageResponse>(
+      process.env.EXPO_PUBLIC_MEDIA_API + '/comments/' + comment_id,
+      options,
+    );
+  };
+
+  return {postComment, getCommentsByPostId, getComments, deleteComment};
 };
-export {useUser, useAuth, useFile, useHabit, usePost, useLike, useComment};
+
+const useReflection = () => {
+  const postReflection = async (
+    reflection_text: string,
+    prompt_id: number,
+    token: string,
+  ) => {
+    const options: RequestInit = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+      body: JSON.stringify({reflection_text, prompt_id}),
+    };
+
+    console.log(reflection_text);
+    return await fetchData<MessageResponse>(
+      process.env.EXPO_PUBLIC_MEDIA_API + '/reflections',
+      options,
+    );
+  };
+
+  const getReflectionsByUser = async (user_id: number, token: string) => {
+    try {
+      const options = {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      };
+      const result = await fetchData<ReflectionWithPrompt[]>(
+        process.env.EXPO_PUBLIC_MEDIA_API + '/reflections/byuser/' + user_id,
+        options,
+      );
+      return result;
+    } catch (error) {
+      console.error('getReflectionsByUser failed', error);
+    }
+  };
+
+  return {postReflection, getReflectionsByUser};
+};
+
+const usePrompt = () => {
+  const [promptList, setPromptList] = useState<Prompt[]>([]);
+  const getPrompts = async () => {
+    const result = await fetchData<Prompt[]>(
+      process.env.EXPO_PUBLIC_MEDIA_API + '/reflections/prompts',
+    );
+    setPromptList(result);
+    console.log(result);
+    return result;
+  };
+  useEffect(() => {
+    getPrompts();
+  }, []);
+  return {promptList, getPrompts};
+};
+
+const useMessage = () => {
+  const [messages, setMessages] = useState<Message | null>(null);
+  const getMessages = async () => {
+    const result = await fetchData<Message>(
+      process.env.EXPO_PUBLIC_MEDIA_API + '/messages',
+    );
+    setMessages(result);
+  };
+
+  useEffect(() => {
+    getMessages();
+  }, []);
+
+  return {getMessages, messages};
+};
+export {
+  useUser,
+  useAuth,
+  useFile,
+  useHabit,
+  usePost,
+  useLike,
+  useComment,
+  useReflection,
+  usePrompt,
+  useMessage,
+};

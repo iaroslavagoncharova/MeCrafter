@@ -1,4 +1,4 @@
-import { Post, UnauthorizedUser, User, UserHabits } from "./DBTypes";
+import { Comment, Post, UnauthorizedUser, User, UserHabits } from "./DBTypes";
 
 type MessageResponse = {
   message: string;
@@ -37,4 +37,27 @@ type PostResponse = MessageResponse & {
   post: Post;
 };
 
-export type { MessageResponse, ErrorResponse, LoginResponse, UserResponse, UserDeleteResponse, HabitResponse, FrequencyResponse, PostResponse };
+type CommentResponse = MessageResponse & {
+  comment: Comment;
+};
+
+type UploadResult = MessageResponse & {
+  data: {
+    filename: string;
+    media_type: string;
+    filesize: number;
+  };
+};
+
+export type {
+  MessageResponse,
+  ErrorResponse,
+  LoginResponse,
+  UserResponse,
+  UserDeleteResponse,
+  HabitResponse,
+  FrequencyResponse,
+  PostResponse,
+  CommentResponse,
+  UploadResult
+};

@@ -65,6 +65,7 @@ const getCreatedHabitById = async (id: number): Promise<UserHabits | null> => {
   }
 };
 
+
 const createHabit = async (
   habit: Omit<UserHabits, 'habit_id'>,
   user_id: number

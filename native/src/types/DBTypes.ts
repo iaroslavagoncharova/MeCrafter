@@ -3,7 +3,7 @@ type UserHabits = {
   habit_name: string;
   habit_description: string;
   habit_category: string;
-}
+};
 type User = {
   user_id: number;
   username: string;
@@ -13,8 +13,8 @@ type User = {
   habit_frequency: number;
   created_at: string;
   habit_name: string;
-}
-type UnauthorizedUser = Omit<User, 'password'>
+};
+type UnauthorizedUser = Omit<User, "password">;
 type PutUserValues = {
   username?: string | null;
   password?: string | null;
@@ -33,7 +33,7 @@ type Post = {
   media_type: string;
 };
 
-type PostWithOwner = Post & Pick<User, 'username'>
+type PostWithOwner = Post & Pick<User, "username">;
 
 type Like = {
   like_id: number;
@@ -50,4 +50,40 @@ type Comment = {
   created_at: string;
 };
 
-export type { UserHabits, User, UnauthorizedUser, PutUserValues, Post, PostWithOwner, Like, Comment }
+type Reflection = {
+  reflection_id: number;
+  user_id: number;
+  prompt_id: number;
+  reflection_text: string;
+  created_at: string;
+};
+
+type Prompt = {
+  prompt_id: number;
+  prompt_text: string;
+  type: string;
+};
+
+type ReflectionWithPrompt = Reflection & Pick<Prompt, "prompt_text">;
+
+type Message = {
+  message_id: number;
+  message_text: string;
+  message_author: string;
+  last_used_date: Date;
+};
+
+export type {
+  UserHabits,
+  User,
+  UnauthorizedUser,
+  PutUserValues,
+  Post,
+  PostWithOwner,
+  Like,
+  Comment,
+  Reflection,
+  Prompt,
+  ReflectionWithPrompt,
+  Message,
+};

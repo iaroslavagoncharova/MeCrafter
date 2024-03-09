@@ -19,6 +19,7 @@ const Navbar = () => {
                             { user ? <li className="list-group-item"><Link to="/profile">Profile</Link></li> : null }
                             { !user ? <li className="list-group-item"><Link to="/signup">Sign up</Link></li> : null }
                             {user ? <li className='list-group-item'><Link to="/tracker">Tracker</Link></li> : null}
+                            {user ? <li className='list-group-item'><Link to="/reflections">Reflections</Link></li> : null}
                         </ul>
                     </div>
                 </div>

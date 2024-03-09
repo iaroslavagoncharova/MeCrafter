@@ -24,20 +24,20 @@ const TabNavigator = () => {
           let iconName;
 
           if (route.name === 'Feed') {
-            iconName = 'home';
+            iconName = 'home' as const;
           } else if (route.name === 'Explore') {
-            iconName = 'search';
+            iconName = 'search' as const;
           } else if (route.name === 'Tracker') {
-            iconName = 'activity';
+            iconName = 'activity' as const;
           } else if (route.name === 'Diary') {
-            iconName = 'book';
+            iconName = 'book' as const;
           } else if (route.name === 'Profile') {
-            iconName = 'user';
+            iconName = 'user' as const;
           } else if (route.name === 'Sign up') {
-            iconName = 'log-in';
+            iconName = 'log-in' as const;
           }
 
-          return <Feather name={iconName} size={size} color={color} />;
+          return <Feather size={size} color={color} name={iconName} />;
         },
       })}
     >

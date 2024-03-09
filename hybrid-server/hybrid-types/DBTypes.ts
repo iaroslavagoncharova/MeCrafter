@@ -11,7 +11,7 @@ type User = {
 
 type UnauthorizedUser = Omit<User, "password">;
 
-type TokenUser = Pick<User, "user_id">
+type TokenUser = Pick<User, "user_id">;
 
 type PutUserValues = {
   username?: string | null;
@@ -24,7 +24,7 @@ type UserHabits = {
   habit_name: string;
   habit_description: string;
   habit_category: string;
-}
+};
 
 // for media api
 
@@ -55,52 +55,31 @@ type Like = {
   created_at: Date;
 };
 
-type Rating = {
-  rating_id: number;
-  media_id: number;
+type Reflection = {
+  reflection_id: number;
   user_id: number;
-  rating_value: number;
-  created_at: Date;
+  prompt_id: number;
+  reflection_text: string;
 };
 
-type Tag = {
-  tag_id: number;
-  tag_name: string;
+type Prompt = {
+  prompt_id: number;
+  prompt_text: string;
+  type: string;
 };
 
-type MediaItemTag = {
-  media_id: number;
-  tag_id: number;
+type ReflectionWithPrompt = Reflection & {
+  prompt_text: string;
 };
 
-type TagResult = MediaItemTag & Tag;
-
-type UploadResult = {
-  message: string;
-  data?: {
-    image: string;
-  };
+type Message = {
+  message_id: number;
+  message_text: string;
+  message_author: string;
+  last_used_date: Date;
 };
-
-// type MostLikedMedia = Pick<
-//   MediaItem,
-//   | "media_id"
-//   | "filename"
-//   | "filesize"
-//   | "media_type"
-//   | "title"
-//   | "description"
-//   | "created_at"
-// > &
-//   Pick<User, "user_id" | "username" | "email" | "created_at"> & {
-//     likes_count: bigint;
-//   };
-
-// type gymnastics to get rid of user_level_id from User type and replace it with level_name from UserLevel type
 
 type TokenContent = Pick<User, "user_id">;
-
-// type MediaItemWithOwner = MediaItem & Pick<User, "username">;
 
 // for upload server
 type FileInfo = {
@@ -112,11 +91,6 @@ export type {
   User,
   Comment,
   Like,
-  Rating,
-  Tag,
-  MediaItemTag,
-  TagResult,
-  UploadResult,
   TokenContent,
   FileInfo,
   UnauthorizedUser,
@@ -124,4 +98,8 @@ export type {
   PutUserValues,
   UserHabits,
   Post,
+  Reflection,
+  Prompt,
+  ReflectionWithPrompt,
+  Message,
 };

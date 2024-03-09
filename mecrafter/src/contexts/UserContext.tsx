@@ -39,10 +39,8 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const handleAutoLogin = async () => {
     try {
       const token = localStorage.getItem("token");
-      console.log(token);
       if (token) {
         const result = await getUserByToken(token);
-        console.log(result.user);
         setUser(result.user);
         const origin = location.state.from.pathname || '/';
         navigate(origin);
