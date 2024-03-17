@@ -40,12 +40,20 @@ type Post = {
   media_type: string;
 };
 
+type PostWithOwner = Post & {
+  username: string;
+};
+
 type Comment = {
   comment_id: number;
   post_id: number;
   user_id: number;
   comment_text: string;
   created_at: Date;
+};
+
+type CommentWithOwner = Comment & {
+  username: string;
 };
 
 type Like = {
@@ -102,4 +110,6 @@ export type {
   Prompt,
   ReflectionWithPrompt,
   Message,
+  CommentWithOwner,
+  PostWithOwner,
 };

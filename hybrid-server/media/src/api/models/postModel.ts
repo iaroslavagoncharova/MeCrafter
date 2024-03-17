@@ -1,19 +1,22 @@
 /* eslint-disable quotes */
 import {ResultSetHeader, RowDataPacket} from 'mysql2';
-import {Post} from '@sharedTypes/DBTypes';
+import {Post, PostWithOwner} from '@sharedTypes/DBTypes';
 import promisePool from '../../lib/db';
 import {fetchData} from '../../lib/functions';
 import {MessageResponse} from '@sharedTypes/MessageTypes';
 
-const getAllPosts = async (): Promise<Post[] | null> => {
+const getAllPosts = async (): Promise<PostWithOwner[] | null> => {
   const uploadUrl = process.env.UPLOAD_URL;
   try {
-    const [rows] = await promisePool.query<RowDataPacket[] & Post[]>(
-      `SELECT *,
-      CONCAT(? , filename) AS filename,
-      CONCAT(?, CONCAT(filename, "-thumb.png")) AS thumbnail
-      FROM posts ORDER BY created_at DESC`,
-      [uploadUrl, uploadUrl]
+    const [rows] = await promisePool.query<RowDataPacket[] & PostWithOwner[]>(
+      `SELECT p.*,
+      CONCAT(? , p.filename) AS filename,
+      CONCAT(?, CONCAT(p.filename, "-thumb.png")) AS thumbnail,
+      u.username AS username
+      FROM Posts p
+      JOIN Users u ON p.user_id = u.user_id
+      ORDER BY p.created_at DESC`,
+      [uploadUrl, uploadUrl],
     );
     if (rows.length === 0) {
       return [];
@@ -32,7 +35,7 @@ const getPostById = async (id: number): Promise<Post | null> => {
     const params = [uploadUrl, uploadUrl, id];
     const [rows] = await promisePool.query<RowDataPacket[] & Post[]>(
       sql,
-      params
+      params,
     );
     if (rows.length === 0) {
       return null;
@@ -45,7 +48,7 @@ const getPostById = async (id: number): Promise<Post | null> => {
 };
 
 const postPost = async (
-  post: Omit<Post, 'post_id' | 'created_at' | 'thumbnail'>
+  post: Omit<Post, 'post_id' | 'created_at' | 'thumbnail'>,
 ): Promise<Post | null> => {
   const {user_id, post_title, post_text, filename, filesize, media_type} = post;
   const sql = `INSERT INTO Posts (user_id, post_title, post_text, filename, filesize, media_type) VALUES (?, ?, ?, ?, ?, ?)`;
@@ -62,7 +65,7 @@ const postPost = async (
     const result = await promisePool.query<ResultSetHeader>(sql, params);
     const [rows] = await promisePool.query<RowDataPacket[] & Post[]>(
       `SELECT * FROM posts WHERE post_id = ?`,
-      [result[0].insertId]
+      [result[0].insertId],
     );
     console.log('rows', rows);
     console.log('result', result);
@@ -79,7 +82,7 @@ const postPost = async (
 const putPost = async (
   post: Pick<Post, 'post_title' | 'post_text'>,
   id: number,
-  user_id: number
+  user_id: number,
 ): Promise<Post | null> => {
   try {
     const {post_title, post_text} = post;
@@ -116,7 +119,7 @@ const putPost = async (
 const deletePost = async (
   post_id: number,
   user_id: number,
-  token: string
+  token: string,
 ): Promise<MessageResponse> => {
   console.log('post_id', post_id, 'user_id', user_id, 'token', token);
   const post = await getPostById(post_id);
@@ -133,7 +136,7 @@ const deletePost = async (
     // add likes and comments delete
     const sql = connection.format(
       `DELETE FROM posts WHERE post_id = ? AND user_id = ?`,
-      [post_id, user_id]
+      [post_id, user_id],
     );
 
     console.log('sql', sql);
@@ -154,7 +157,7 @@ const deletePost = async (
     try {
       const deleteResult = await fetchData<MessageResponse>(
         `${process.env.UPLOAD_SERVER}/delete/${post.filename}`,
-        options
+        options,
       );
 
       console.log('deleteResult', deleteResult);

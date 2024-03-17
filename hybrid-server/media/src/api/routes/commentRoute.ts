@@ -6,6 +6,7 @@ import {
   getCommentsForPost,
   getCommentsOfUser,
   postComment,
+  updateComment,
 } from '../controllers/commentController';
 import {authenticate, validationErrors} from '../../middlewares';
 import {body} from 'express-validator';
@@ -20,10 +21,13 @@ commentRouter
     body('comment_text').isString().isLength({min: 1, max: 255}),
     body('post_id').isInt({min: 1}),
     validationErrors,
-    postComment
+    postComment,
   );
 
-commentRouter.route('/:id').delete(authenticate, deleteComment);
+commentRouter
+  .route('/:id')
+  .delete(authenticate, deleteComment)
+  .put(authenticate, updateComment);
 
 commentRouter.route('/bypost/:id').get(getCommentsForPost);
 

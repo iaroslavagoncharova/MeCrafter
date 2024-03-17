@@ -2,6 +2,8 @@ import express from 'express';
 import {
   createLike,
   getCount,
+  getLikeByPostAndUser,
+  getLikeByPostId,
   getLikeByUserId,
   getLikes,
   removeLike,
@@ -16,13 +18,18 @@ likesRouter
   .get(getLikes)
   .post(
     authenticate,
-    body('post_id').isInt({min: 1}),
+    body('post_id').notEmpty().isInt(),
     validationErrors,
-    createLike
+    createLike,
   );
 
+likesRouter.route('/bypost/:id').get(getLikeByPostId);
+
+likesRouter.route('/bypost/user/:id').get(authenticate, getLikeByPostAndUser);
+
+likesRouter.route('/byuser/:id').get(authenticate, getLikeByUserId);
+
 likesRouter.route('/:id').delete(authenticate, removeLike);
-likesRouter.route('/bypost/:id').get(authenticate, getLikeByUserId);
 
 likesRouter.route('/count/:id').get(getCount);
 

@@ -11,7 +11,7 @@ const getReflectionsByUser = async (
       RowDataPacket[] & ReflectionWithPrompt[]
     >(
       'SELECT * FROM userreflections LEFT JOIN reflectionprompts ON userreflections.prompt_id = reflectionprompts.prompt_id WHERE user_id = ?',
-      [id]
+      [id],
     );
     if (rows.length === 0) {
       return null;

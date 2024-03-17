@@ -73,7 +73,7 @@ const validationErrors = (req: Request, _res: Response, next: NextFunction) => {
   if (!errors.isEmpty()) {
     const messages: string = errors
       .array()
-      .map((error) => `${error.msg}: ${error.param}`)
+      .map((error) => `${error.msg}: ${error}`)
       .join(', ');
     next(new CustomError(messages, 400));
     return;

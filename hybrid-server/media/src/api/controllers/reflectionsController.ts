@@ -81,9 +81,10 @@ const fetchReflectionByUser = async (
       console.log('result', result);
       res.json(result);
       return;
+    } else {
+      console.log('no result');
+      return;
     }
-    const error = new Error('No reflections found');
-    next(error);
   } catch (error) {
     next(error);
   }

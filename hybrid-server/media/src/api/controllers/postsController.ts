@@ -1,4 +1,4 @@
-import {TokenUser, Post} from '@sharedTypes/DBTypes';
+import {TokenUser, Post, PostWithOwner} from '@sharedTypes/DBTypes';
 import {Request, Response, NextFunction} from 'express';
 import {
   deletePost,
@@ -12,8 +12,8 @@ import {PostResponse, MessageResponse} from '@sharedTypes/MessageTypes';
 
 const getPostsList = async (
   req: Request,
-  res: Response<Post[]>,
-  next: NextFunction
+  res: Response<PostWithOwner[]>,
+  next: NextFunction,
 ) => {
   try {
     const posts = await getAllPosts();
@@ -31,7 +31,7 @@ const getPostsList = async (
 const getPost = async (
   req: Request<{id: string}>,
   res: Response<Post>,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const id = Number(req.params.id);
@@ -50,7 +50,7 @@ const getPost = async (
 const createPost = async (
   req: Request<{}, {}, Omit<Post, 'post_id'>>,
   res: Response<PostResponse, {user: TokenUser}>,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     req.body.user_id = res.locals.user.user_id;
@@ -71,7 +71,7 @@ const createPost = async (
 const updatePost = async (
   req: Request<{id: string}, {}, Pick<Post, 'post_title' | 'post_text'>>,
   res: Response<PostResponse, {user: TokenUser}>,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const id = Number(req.params.id);
@@ -90,14 +90,14 @@ const updatePost = async (
 const removePost = async (
   req: Request<{id: string}>,
   res: Response<MessageResponse, {user: TokenUser; token: string}>,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const id = Number(req.params.id);
     const result = await deletePost(
       id,
       res.locals.user.user_id,
-      res.locals.token
+      res.locals.token,
     );
     if (result) {
       res.json({message: 'Post deleted'});

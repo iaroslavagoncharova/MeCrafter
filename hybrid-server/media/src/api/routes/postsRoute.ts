@@ -21,7 +21,7 @@ postsRouter
     body('media_type').notEmpty().isString().escape(),
     body('filesize').notEmpty().isNumeric().escape(),
     validationErrors,
-    createPost
+    createPost,
   );
 
 postsRouter
@@ -32,7 +32,7 @@ postsRouter
     body('post_title').optional().isString().escape(),
     body('post_text').optional().isString().escape(),
     validationErrors,
-    updatePost
+    updatePost,
   )
   .delete(authenticate, removePost);
 
