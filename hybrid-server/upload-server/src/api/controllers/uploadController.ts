@@ -74,31 +74,28 @@ const deleteFile = async (
       return;
     }
 
-      // get filename without extension for jwt verification
-      // filename has multiple dots, so split by dot and remove last element
-      const filenameWithoutExtension = filename
-        .split('.')
-        .slice(0, -1)
-        .join('.');
-      if (!filenameWithoutExtension) {
-        const err = new CustomError('filename not valid', 400);
-        next(err);
-        return;
-      }
+    // get filename without extension for jwt verification
+    // filename has multiple dots, so split by dot and remove last element
+    const filenameWithoutExtension = filename.split('.').slice(0, -1).join('.');
+    if (!filenameWithoutExtension) {
+      const err = new CustomError('filename not valid', 400);
+      next(err);
+      return;
+    }
 
-      console.log('filenameWithoutExtension', filenameWithoutExtension);
+    console.log('filenameWithoutExtension', filenameWithoutExtension);
 
-      // check from token if user is owner of file
-      const decodedTokenFromFileName = jwt.verify(
-        filenameWithoutExtension,
-        process.env.JWT_SECRET as string,
-      ) as FileInfo;
+    // check from token if user is owner of file
+    const decodedTokenFromFileName = jwt.verify(
+      filenameWithoutExtension,
+      process.env.JWT_SECRET as string,
+    ) as FileInfo;
 
-      if (decodedTokenFromFileName.user_id !== res.locals.user.user_id) {
-        const err = new CustomError('user not authorized', 401);
-        next(err);
-        return;
-      }
+    if (decodedTokenFromFileName.user_id !== res.locals.user.user_id) {
+      const err = new CustomError('user not authorized', 401);
+      next(err);
+      return;
+    }
 
     // delete  from uploads folder
     if (fs.existsSync(`./uploads/${filename}-thumb.png`)) {
