@@ -8,7 +8,7 @@ const getUsers = async (): Promise<UnauthorizedUser[] | null> => {
     const [result] = await promisePool.execute<
       RowDataPacket[] & UnauthorizedUser[]
     >(
-      'SELECT Users.user_id, Users.username, Users.email, Users.created_at FROM Users'
+      'SELECT Users.user_id, Users.username, Users.email, Users.created_at, Users.habit_frequency, Users.habit_id, Habits.habit_name FROM Users LEFT JOIN Habits ON Users.habit_id = Habits.habit_id'
     );
     if (result.length === 0) {
       return null;
