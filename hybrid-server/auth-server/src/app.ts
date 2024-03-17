@@ -11,10 +11,11 @@ app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-eval"],
+      scriptSrc: ["'self'", "'unsafe-eval'"],
     },
   })
-)
+);
+
 app.use(morgan('dev'));
 
 app.use(cors())

@@ -8,6 +8,6 @@
     "withCompare": true,
     "withGenerator": true
   },
-  "exclude": ["node_modules/"],
+  "exclude": ["node_modules/, public/"],
   "files": ["src/**/*.ts"]
 }
