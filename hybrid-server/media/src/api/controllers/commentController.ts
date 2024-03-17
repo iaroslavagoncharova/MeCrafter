@@ -22,7 +22,7 @@ const getAllComments = async (
       res.json(comments);
       return;
     }
-    // next(new CustomError('No comments found', 404));
+    next(new CustomError('No comments found', 404));
   } catch (error) {
     next(error);
   }
@@ -104,15 +104,12 @@ const deleteComment = async (
 ) => {
   try {
     const id = Number(req.params.id);
-    const result = await deleteCommentById(
-      id,
-      res.locals.user.user_id,
-      res.locals.token,
-    );
+    const result = await deleteCommentById(id, res.locals.user.user_id);
     if (result) {
       res.json({message: 'Comment deleted'});
       return;
     }
+    next(new CustomError('Comment not deleted', 500));
   } catch (error) {
     next(error);
   }

@@ -99,7 +99,6 @@ const createComment = async (
 const deleteCommentById = async (
   comment_id: number,
   user_id: number,
-  token: string,
 ): Promise<MessageResponse | null> => {
   try {
     const [rows] = await promisePool.query<ResultSetHeader>(
